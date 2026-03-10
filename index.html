@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CURSOS CON CERTIFICACIÓN CIP</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Helvetica Neue Light', HelveticaNeue-Light, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: #EEEEEE;
+  color: #333;
+}
+
+
+.site-header {
+  background: #F3F3F3;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.site-title { font-size: clamp(.9rem, 3.5vw, 1.3rem); font-weight: 300; color: #555; }
+.search-wrap { position: relative; display:flex; gap:4px; }
+.search-box { border: 1px solid #ccc; padding: 5px 10px; font-size: .83rem; color: #333; border-radius: 2px 0 0 2px; background: #fff; width: 160px; outline: none; }
+.search-box:focus { border-color: #009EB8; }
+.search-btn { background:#009EB8; color:#fff; border:none; padding:5px 10px; border-radius:0 2px 2px 0; cursor:pointer; font-size:.85rem; }
+
+
+.nav-bar { background: #333; display: flex; overflow-x: auto; scrollbar-width: none; }
+.nav-bar::-webkit-scrollbar { display: none; }
+.nav-bar a {
+  color: #fff; text-decoration: none; font-size: .83rem;
+  padding: 11px 15px; display: inline-block; white-space: nowrap;
+  opacity: .7; cursor: pointer; transition: opacity .15s, background .15s;
+  border-bottom: 3px solid transparent;
+}
+.nav-bar a:hover { opacity: 1; }
+.nav-bar a.active { opacity: 1; font-weight: 600; border-bottom-color: #009EB8; }
+
+
+.view { display: none; }
+.view.active { display: block; }
+
+
+.classic-wrap {
+  max-width: 960px; margin: 0 auto; padding: 16px 12px;
+  display: grid; grid-template-columns: 1fr 280px; gap: 18px; align-items: start;
+}
+@media(max-width:680px){ .classic-wrap{grid-template-columns:1fr;} .sidebar-col{display:none;} }
+
+.post-card { background:#fff; border:1px solid #e0e0e0; border-radius:2px; margin-bottom:16px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.07); }
+.post-top { display:flex; align-items:stretch; border-bottom:1px solid #f0f0f0; }
+.post-header { padding:10px 14px 8px; flex:1; }
+.post-label { font-size:.68rem; color:#999; text-transform:uppercase; letter-spacing:.5px; margin-bottom:3px; }
+.post-title { font-size:clamp(.9rem,3vw,1.22rem); font-weight:400; color:#009EB8; line-height:1.3; margin-bottom:3px; }
+.post-meta { font-size:.74rem; color:#888; }
+
+.post-body { display:grid; grid-template-columns:1fr 1fr; }
+@media(max-width:500px){ .post-body{grid-template-columns:1fr;} }
+.pcol { padding:13px 15px; border-right:1px solid #f0f0f0; }
+.pcol:last-child { border-right:none; }
+.pcol p { font-size:.82rem; color:#555; line-height:1.65; margin-bottom:9px; }
+.pcol ul { padding-left:15px; margin-bottom:9px; }
+.pcol ul li { font-size:.8rem; color:#555; line-height:1.6; margin-bottom:2px; }
+.pcol h3 { font-size:.93rem; font-weight:700; color:#009EB8; margin-bottom:7px; }
+.badge { display:inline-block; background:#e0f4f8; color:#009EB8; font-size:.72rem; padding:3px 10px; border-radius:20px; margin-bottom:9px; }
+.btn-blue { display:inline-block; background:#009EB8; color:#fff; padding:8px 17px; border-radius:4px; font-size:.82rem; font-weight:600; text-decoration:none; margin-top:5px; }
+.btn-blue:hover { background:#007a90; }
+.btn-blue-full { display:block; text-align:center; background:#009EB8; color:#fff; padding:9px; border-radius:4px; font-size:.82rem; font-weight:600; text-decoration:none; margin-top:7px; }
+.contact-mini { display:flex; flex-wrap:wrap; gap:5px; margin-top:11px; padding-top:9px; border-top:1px solid #eee; font-size:.72rem; color:#777; }
+.contact-mini a { color:#009EB8; text-decoration:none; }
+.info-label { font-size:.7rem; color:#999; font-weight:700; text-transform:uppercase; letter-spacing:.4px; margin:11px 0 3px; }
+.info-label:first-child { margin-top:0; }
+.inicio-h { font-size:1rem; font-weight:700; color:#333; margin-bottom:2px; }
+.contacto-links { font-size:.8rem; color:#555; line-height:2; }
+.contacto-links a { color:#009EB8; text-decoration:none; }
+.reminder { border-top:1px solid #eee; margin-top:9px; padding-top:9px; }
+.reminder h5 { font-size:.77rem; font-weight:700; color:#333; margin-bottom:3px; }
+.reminder p { font-size:.75rem; color:#777; line-height:1.55; }
+.modalidad-box { background:#f0f9ff; border:1px solid #b3e0f0; border-radius:6px; padding:9px 11px; margin-top:9px; }
+.modalidad-box p { font-size:.78rem; color:#006070; margin:0; line-height:1.6; }
+
+
+.precios-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding:13px 15px; }
+@media(max-width:460px){ .precios-grid{grid-template-columns:repeat(2,1fr);} }
+.pc { border-radius:8px; padding:11px 7px; text-align:center; border:2px solid; }
+.pc.g{border-color:#4caf50;background:#f1fbf2;} .pc.o{border-color:#ff9800;background:#fff8f0;}
+.pc.b{border-color:#2196f3;background:#f0f7ff;} .pc.p{border-color:#9c27b0;background:#faf0ff;}
+.pc .val{font-size:.65rem;color:#888;font-weight:700;margin-bottom:5px;}
+.pc .amt{font-size:1.7rem;font-weight:700;color:#333;line-height:1;}
+.pc .uni{font-size:.68rem;color:#aaa;margin-bottom:5px;}
+.pc .prm{font-size:.69rem;color:#555;line-height:1.4;}
+.pc .prm strong{color:#009EB8;}
+.precios-cta{padding:8px 15px 13px;text-align:center;font-size:.82rem;color:#555;border-top:1px solid #f0f0f0;}
+
+
+.pagos-body{padding:13px 15px;}
+.pagos-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:13px;}
+@media(max-width:380px){.pagos-grid{grid-template-columns:1fr;}}
+.pagos-grid h4{font-size:.73rem;text-transform:uppercase;font-weight:700;color:#888;letter-spacing:.4px;margin-bottom:7px;}
+.brow{display:flex;align-items:flex-start;gap:6px;margin-bottom:7px;font-size:.78rem;color:#333;flex-wrap:wrap;}
+.brow .note{font-size:.68rem;color:#c0392b;font-style:italic;width:100%;}
+.tag{font-size:.62rem;font-weight:700;padding:2px 5px;border-radius:3px;color:#fff;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.t-bbva{background:#004481;} .t-bcp{background:#ef3930;} .t-ib{background:#008c44;} .t-yape{background:#72058b;} .t-plin{background:#00b4d8;}
+.pasos-box{background:#f9f9f9;border:1px solid #eee;border-radius:6px;padding:11px 13px;}
+.pasos-box h4{font-size:.78rem;font-weight:700;color:#333;margin-bottom:9px;text-transform:uppercase;letter-spacing:.3px;}
+.paso{display:flex;gap:9px;margin-bottom:7px;font-size:.8rem;color:#555;align-items:flex-start;}
+.pn{background:#009EB8;color:#fff;width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.66rem;font-weight:700;flex-shrink:0;margin-top:1px;}
+
+
+.beneficios-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:13px 15px;}
+@media(max-width:460px){.beneficios-grid{grid-template-columns:repeat(2,1fr);}}
+.ben-card{background:#f9f9f9;border:1px solid #eee;border-radius:8px;padding:11px 9px;text-align:center;}
+.ben-card .ico{font-size:1.5rem;margin-bottom:5px;}
+.ben-card p{font-size:.76rem;color:#555;line-height:1.4;font-weight:600;}
+
+
+.tem-item{border-bottom:1px solid #f0f0f0;}
+.tem-btn{width:100%;background:#fff;border:none;padding:12px 15px;text-align:left;font-size:.85rem;font-weight:600;color:#333;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:inherit;transition:background .15s;}
+.tem-btn:hover{background:#f5f5f5;}
+.tem-btn .arr{color:#009EB8;font-size:.8rem;transition:transform .25s;flex-shrink:0;}
+.tem-btn.open .arr{transform:rotate(180deg);}
+.tem-panel{display:none;padding:11px 15px 15px;background:#fafafa;border-top:1px solid #eee;}
+.tem-panel.open{display:block;}
+.tem-cols{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+@media(max-width:440px){.tem-cols{grid-template-columns:1fr;}}
+.tm h5{font-size:.73rem;font-weight:700;color:#009EB8;text-transform:uppercase;letter-spacing:.3px;margin:9px 0 4px;border-bottom:1px solid #e0f4f8;padding-bottom:2px;}
+.tm h5:first-child{margin-top:0;}
+.tm ul{list-style:none;padding:0;}
+.tm ul li{font-size:.77rem;color:#555;padding:2px 0 2px 13px;position:relative;line-height:1.45;}
+.tm ul li::before{content:'›';position:absolute;left:2px;color:#009EB8;font-weight:700;}
+.tip{background:#e0f4f8;border-radius:6px;padding:8px 10px;margin-top:11px;font-size:.76rem;color:#006070;line-height:1.5;text-align:center;}
+.session-item{display:flex;align-items:flex-start;gap:9px;padding:6px 0;border-bottom:1px solid #f5f5f5;}
+.session-item:last-child{border-bottom:none;}
+.s-num{background:#666;color:#fff;font-size:.63rem;font-weight:700;padding:2px 5px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.session-item span{font-size:.79rem;color:#555;line-height:1.45;}
+
+
+.sw{background:#fff;border:1px solid #e0e0e0;border-radius:2px;margin-bottom:13px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.sw-title{background:#333;color:#fff;font-size:.76rem;font-weight:600;padding:8px 12px;text-transform:uppercase;letter-spacing:.4px;}
+.sw-body{padding:12px;}
+.sw-body p{font-size:.79rem;color:#555;line-height:1.6;margin-bottom:6px;}
+.sw-body a{display:block;color:#009EB8;font-size:.79rem;text-decoration:none;padding:2px 0;}
+.sw-body a:hover{text-decoration:underline;}
+.sc{padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:.79rem;color:#444;display:flex;align-items:center;gap:5px;}
+.sc:last-child{border-bottom:none;}
+.brow-s{display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;font-size:.75rem;color:#333;flex-wrap:wrap;}
+.brow-s .note{font-size:.66rem;color:#c0392b;font-style:italic;width:100%;}
+
+
+#view-flipcard { padding: 16px 12px; max-width: 980px; margin: 0 auto; }
+.flipcard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+@media(max-width:480px){ .flipcard-grid{ grid-template-columns: repeat(2,1fr); gap:10px; } }
+
+.flip-card { perspective: 800px; height: 220px; cursor: pointer; }
+.flip-inner { position:relative; width:100%; height:100%; transition:transform .55s ease; transform-style:preserve-3d; }
+.flip-card:hover .flip-inner, .flip-card.flipped .flip-inner { transform:rotateY(180deg); }
+.flip-front, .flip-back { position:absolute; inset:0; border-radius:6px; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px; text-align:center; }
+.flip-front { background:#009EB8; color:#fff; box-shadow:0 3px 12px rgba(0,0,0,.18); }
+.flip-front .fi { font-size:2.4rem; margin-bottom:10px; }
+.flip-front h3 { font-size:.9rem; font-weight:700; line-height:1.3; }
+.flip-front .fh { font-size:.72rem; opacity:.85; margin-top:4px; }
+.flip-back { background:#fff; border:2px solid #009EB8; transform:rotateY(180deg); box-shadow:0 3px 12px rgba(0,0,0,.13); }
+.flip-back h4 { font-size:.82rem; font-weight:700; color:#009EB8; margin-bottom:8px; }
+.flip-back p { font-size:.75rem; color:#555; line-height:1.55; margin-bottom:8px; }
+.flip-back .fb-cert { font-size:.7rem; background:#e0f4f8; color:#009EB8; padding:3px 8px; border-radius:20px; }
+.flip-back a { margin-top:8px; display:inline-block; background:#009EB8; color:#fff; font-size:.72rem; font-weight:700; padding:5px 12px; border-radius:4px; text-decoration:none; }
+
+
+#view-magazine { padding: 16px 12px; max-width: 980px; margin: 0 auto; }
+.magazine-hero {
+  display: grid; grid-template-columns: 1.8fr 1fr; gap: 16px; margin-bottom: 16px;
+}
+@media(max-width:580px){ .magazine-hero{grid-template-columns:1fr;} }
+.mag-feature { background:#009EB8; color:#fff; border-radius:6px; padding:28px 24px; display:flex; flex-direction:column; justify-content:flex-end; min-height:260px; position:relative; overflow:hidden; }
+.mag-feature::before { content:'🎓'; position:absolute; top:-10px; right:-10px; font-size:9rem; opacity:.1; }
+.mag-feature .mf-label { font-size:.7rem; text-transform:uppercase; letter-spacing:1px; opacity:.8; margin-bottom:8px; }
+.mag-feature h2 { font-size:clamp(1.1rem,3vw,1.6rem); font-weight:700; line-height:1.25; margin-bottom:10px; }
+.mag-feature p { font-size:.83rem; opacity:.9; line-height:1.6; margin-bottom:14px; }
+.mag-feature a { display:inline-block; background:#fff; color:#009EB8; font-size:.8rem; font-weight:700; padding:8px 18px; border-radius:4px; text-decoration:none; }
+.mag-side { display:flex; flex-direction:column; gap:12px; }
+.mag-side-card { background:#fff; border:1px solid #e0e0e0; border-radius:6px; padding:14px; box-shadow:0 1px 4px rgba(0,0,0,.07); flex:1; }
+.mag-side-card .ms-label { font-size:.65rem; text-transform:uppercase; color:#999; letter-spacing:.5px; margin-bottom:5px; }
+.mag-side-card h3 { font-size:.88rem; font-weight:700; color:#009EB8; margin-bottom:6px; line-height:1.3; }
+.mag-side-card p { font-size:.77rem; color:#666; line-height:1.5; }
+
+.mag-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px; }
+@media(max-width:560px){ .mag-grid{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:360px){ .mag-grid{grid-template-columns:1fr;} }
+.mag-card { background:#fff; border:1px solid #e0e0e0; border-radius:6px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.07); }
+.mag-card-top { background:#333; padding:18px 14px; text-align:center; font-size:2rem; }
+.mag-card-top.c1{background:#004481;} .mag-card-top.c2{background:#008c44;} .mag-card-top.c3{background:#b8860b;}
+.mag-card-top.c4{background:#8b0000;} .mag-card-top.c5{background:#4a235a;} .mag-card-top.c6{background:#1a5276;}
+.mag-card-body { padding:12px 13px; }
+.mag-card-body .mc-label { font-size:.65rem; text-transform:uppercase; color:#999; letter-spacing:.4px; margin-bottom:4px; }
+.mag-card-body h3 { font-size:.85rem; font-weight:700; color:#333; margin-bottom:5px; line-height:1.3; }
+.mag-card-body p { font-size:.75rem; color:#666; line-height:1.5; }
+.mag-card-body .mc-cert { display:inline-block; background:#e0f4f8; color:#009EB8; font-size:.65rem; padding:2px 7px; border-radius:20px; margin-top:6px; }
+
+.mag-bottom { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media(max-width:480px){ .mag-bottom{grid-template-columns:1fr;} }
+.mag-info-box { background:#fff; border:1px solid #e0e0e0; border-radius:6px; padding:14px; box-shadow:0 1px 4px rgba(0,0,0,.07); }
+.mag-info-box h4 { font-size:.82rem; font-weight:700; color:#333; margin-bottom:10px; border-bottom:2px solid #009EB8; padding-bottom:5px; }
+.mag-info-box p { font-size:.77rem; color:#555; line-height:1.7; margin-bottom:3px; }
+
+
+#view-mosaic { padding: 16px 12px; max-width: 980px; margin: 0 auto; }
+.mosaic-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto;
+  gap: 10px;
+}
+@media(max-width:680px){ .mosaic-grid{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:380px){ .mosaic-grid{grid-template-columns:1fr;} }
+
+.mos { border-radius:6px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.14); transition:transform .2s, box-shadow .2s; position:relative; }
+.mos:hover { transform:scale(1.02); box-shadow:0 4px 16px rgba(0,0,0,.22); }
+.mos-big { grid-column:span 2; grid-row:span 2; }
+.mos-inner { height:100%; min-height:150px; display:flex; flex-direction:column; justify-content:flex-end; padding:14px; }
+.mos.m0{background:linear-gradient(135deg,#009EB8,#004d7a);}
+.mos.m1{background:linear-gradient(135deg,#2e7d32,#1b5e20);}
+.mos.m2{background:linear-gradient(135deg,#b8860b,#7b5800);}
+.mos.m3{background:linear-gradient(135deg,#8b0000,#4a0000);}
+.mos.m4{background:linear-gradient(135deg,#4a235a,#1a0030);}
+.mos.m5{background:linear-gradient(135deg,#1a5276,#0d2b4a);}
+.mos.m6{background:linear-gradient(135deg,#004481,#001e3a);}
+.mos.m-promo{background:linear-gradient(135deg,#333,#111);}
+.mos-ico { font-size:2.5rem; opacity:.25; position:absolute; top:10px; right:10px; }
+.mos-inner .mo-label { font-size:.6rem; text-transform:uppercase; color:rgba(255,255,255,.7); letter-spacing:.6px; margin-bottom:4px; }
+.mos-inner h3 { font-size:clamp(.82rem,2.5vw,1rem); font-weight:700; color:#fff; line-height:1.25; margin-bottom:3px; }
+.mos-inner p { font-size:.73rem; color:rgba(255,255,255,.82); line-height:1.5; }
+.mos-inner .mo-cert { display:inline-block; background:rgba(255,255,255,.2); color:#fff; font-size:.65rem; padding:2px 7px; border-radius:20px; margin-top:6px; }
+
+
+#view-sidebar { padding: 16px 12px; max-width: 980px; margin: 0 auto; }
+.sidebar-view-wrap { display:grid; grid-template-columns:260px 1fr; gap:18px; align-items:start; }
+@media(max-width:660px){ .sidebar-view-wrap{grid-template-columns:1fr;} }
+.sb-left { position:sticky; top:10px; }
+.sb-menu { background:#fff; border:1px solid #e0e0e0; border-radius:4px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+.sb-menu-title { background:#009EB8; color:#fff; padding:11px 14px; font-size:.8rem; font-weight:700; text-transform:uppercase; letter-spacing:.4px; }
+.sb-menu a { display:flex; align-items:center; gap:9px; padding:10px 14px; font-size:.83rem; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; cursor:pointer; transition:background .15s; }
+.sb-menu a:last-child { border-bottom:none; }
+.sb-menu a:hover, .sb-menu a.active-sb { background:#e0f4f8; color:#009EB8; font-weight:600; }
+.sb-menu a .sb-ico { font-size:1.1rem; }
+.sb-content { }
+.sb-panel { display:none; }
+.sb-panel.active { display:block; }
+.sb-post { background:#fff; border:1px solid #e0e0e0; border-radius:4px; padding:16px; margin-bottom:12px; box-shadow:0 1px 4px rgba(0,0,0,.07); }
+.sb-post .sp-label { font-size:.68rem; text-transform:uppercase; color:#999; letter-spacing:.5px; margin-bottom:5px; }
+.sb-post h3 { font-size:.97rem; font-weight:700; color:#009EB8; margin-bottom:8px; line-height:1.3; }
+.sb-post p { font-size:.82rem; color:#555; line-height:1.65; margin-bottom:7px; }
+.sb-post ul { padding-left:14px; margin-bottom:8px; }
+.sb-post ul li { font-size:.8rem; color:#555; line-height:1.6; margin-bottom:2px; }
+.sb-post h4 { font-size:.8rem; font-weight:700; color:#333; text-transform:uppercase; letter-spacing:.3px; margin:10px 0 5px; }
+.sb-post h4:first-child { margin-top:0; }
+
+
+#view-snapshot { padding: 16px 12px; max-width: 980px; margin: 0 auto; }
+.snapshot-hero { background:linear-gradient(135deg,#004d7a,#009EB8); border-radius:8px; padding:32px 24px; color:#fff; text-align:center; margin-bottom:18px; position:relative; overflow:hidden; }
+.snapshot-hero::before { content:'🎓'; position:absolute; font-size:12rem; opacity:.06; top:-20px; left:-20px; }
+.snapshot-hero h1 { font-size:clamp(1.4rem,5vw,2.2rem); font-weight:700; margin-bottom:8px; }
+.snapshot-hero p { font-size:.92rem; opacity:.9; margin-bottom:16px; }
+.snapshot-hero .sh-badges { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:18px; }
+.snapshot-hero .sh-badge { background:rgba(255,255,255,.2); color:#fff; font-size:.75rem; padding:4px 12px; border-radius:20px; }
+.snapshot-hero a { display:inline-block; background:#fff; color:#009EB8; font-weight:700; font-size:.88rem; padding:10px 24px; border-radius:5px; text-decoration:none; }
+
+.snapshot-timeline { position:relative; padding-left:30px; }
+.snapshot-timeline::before { content:''; position:absolute; left:12px; top:0; bottom:0; width:2px; background:#009EB8; opacity:.3; }
+.snap-item { position:relative; margin-bottom:16px; }
+.snap-dot { position:absolute; left:-24px; top:14px; width:12px; height:12px; border-radius:50%; background:#009EB8; border:2px solid #fff; box-shadow:0 0 0 2px #009EB8; }
+.snap-card { background:#fff; border:1px solid #e0e0e0; border-radius:6px; padding:14px 16px; box-shadow:0 1px 4px rgba(0,0,0,.07); }
+.snap-card .sk-label { font-size:.67rem; color:#009EB8; text-transform:uppercase; font-weight:700; letter-spacing:.5px; margin-bottom:4px; }
+.snap-card h3 { font-size:.93rem; font-weight:700; color:#333; margin-bottom:6px; }
+.snap-card p { font-size:.8rem; color:#666; line-height:1.6; }
+
+
+#view-timeslide { padding: 16px 12px; max-width: 980px; margin: 0 auto; }
+.timeslide-wrap { position:relative; }
+.ts-track { display:flex; gap:0; overflow:hidden; }
+.ts-slide { min-width:100%; transition:transform .4s ease; }
+.ts-slide-inner { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:4px; }
+@media(max-width:540px){ .ts-slide-inner{grid-template-columns:1fr;} }
+.ts-card { background:#fff; border:1px solid #e0e0e0; border-radius:6px; padding:16px; box-shadow:0 1px 5px rgba(0,0,0,.09); }
+.ts-card .tc-date { font-size:.65rem; color:#009EB8; text-transform:uppercase; font-weight:700; letter-spacing:.6px; margin-bottom:6px; }
+.ts-card h3 { font-size:.92rem; font-weight:700; color:#333; margin-bottom:7px; line-height:1.3; }
+.ts-card p { font-size:.8rem; color:#666; line-height:1.6; }
+.ts-card .tc-cert { display:inline-block; background:#e0f4f8; color:#009EB8; font-size:.68rem; padding:2px 8px; border-radius:20px; margin-top:7px; }
+
+.ts-controls { display:flex; align-items:center; justify-content:center; gap:14px; margin-top:14px; }
+.ts-btn { background:#009EB8; color:#fff; border:none; width:34px; height:34px; border-radius:50%; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+.ts-btn:hover { background:#007a90; }
+.ts-btn:disabled { background:#ccc; cursor:default; }
+.ts-dots { display:flex; gap:6px; }
+.ts-dot { width:8px; height:8px; border-radius:50%; background:#ccc; cursor:pointer; transition:background .2s; }
+.ts-dot.active { background:#009EB8; }
+.ts-counter { font-size:.78rem; color:#888; }
+
+
+.site-footer { background:#333; color:#aaa; text-align:center; padding:12px 16px; font-size:.74rem; }
+.site-footer a { color:#009EB8; text-decoration:none; }
+.wa-fab { position:fixed; bottom:16px; right:14px; z-index:999; background:#25d366; color:#fff; border-radius:50px; padding:9px 15px; font-size:.82rem; font-weight:700; text-decoration:none; box-shadow:0 3px 12px rgba(0,0,0,.25); display:flex; align-items:center; gap:7px; }
+</style>
+</head>
+<body>
+
+
+<div class="site-header">
+  <div class="site-title">CURSOS CON CERTIFICACIÓN CIP</div>
+  <div class="search-wrap">
+    <input class="search-box" type="text" id="search-input" placeholder="buscar curso..."
+      oninput="doSearch(this.value)"
+      onkeydown="if(event.key==='Enter')doSearch(this.value)"/>
+    <button class="search-btn" onclick="doSearch(document.getElementById('search-input').value)">🔍</button>
+  </div>
+</div>
+<div id="search-results-bar" style="display:none;background:#fff3cd;border-bottom:2px solid #ffc107;padding:8px 16px;font-size:.83rem;color:#555;">
+  <span id="search-msg"></span> &nbsp;
+  <a href="#" onclick="clearSearch();return false;" style="color:#c0392b;font-weight:700;">✕ Limpiar</a>
+</div>
+
+
+<nav class="nav-bar" id="main-nav">
+  <a onclick="switchView('classic')"  class="active" id="nav-classic">Classic</a>
+  <a onclick="switchView('flipcard')" id="nav-flipcard">Flipcard</a>
+  <a onclick="switchView('magazine')" id="nav-magazine">Magazine</a>
+  <a onclick="switchView('mosaic')"   id="nav-mosaic">Mosaic</a>
+  <a onclick="switchView('sidebar')"  id="nav-sidebar">Sidebar</a>
+  <a onclick="switchView('snapshot')" id="nav-snapshot">Snapshot</a>
+  <a onclick="switchView('timeslide')"id="nav-timeslide">Timeslide</a>
+</nav>
+
+
+<div class="view active" id="view-classic">
+<div class="classic-wrap">
+<main>
+
+  
+  <article class="post-card">
+    <div class="post-top">
+      <div class="post-header">
+        <div class="post-label">CURSO CON TRIPLE CERTIFICACIÓN</div>
+        <h2 class="post-title">Gestión y Manejo de Sistemas Administrativos del Estado • Invierte.pe • INFOBRAS</h2>
+        <div class="post-meta">Inscripciones abiertas — Inicio: <strong>21 de marzo de 2026</strong></div>
+      </div>
+    </div>
+    <div class="post-body">
+      <div class="pcol">
+        <span class="badge">Certificado por 80 horas por curso</span>
+        <h3>Tres cursos prácticos y actualizados</h3>
+        <p>Domina la programación multianual, formula proyectos en Invierte.pe, registra y supervisa obras en INFOBRAS y mejora la gestión administrativa pública.</p>
+        <a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue">Inscríbete ahora</a>
+        <div class="contact-mini">
+          <span>🌐 <a href="https://ingenierialider.org.pe" target="_blank">ingenierialider.org.pe</a></span>
+          <span>📱 <a href="https://wa.me/51930449016">+51 930 449 016</a></span>
+          <span>📧 📧 <a href="mailto:tuportalacademico@gmail.com">tuportalacademico@gmail.com</a></span>
+        </div>
+      </div>
+      <div class="pcol">
+        <div class="inicio-h">🗓 Inicio: 21 Mar 2026</div>
+        <p style="font-size:.76rem;color:#888;margin-bottom:0">Inscripciones abiertas • Cupos limitados</p>
+        <div class="info-label">Contacto</div>
+        <div class="contacto-links">
+          WhatsApp: <a href="https://wa.me/51930449016">+51 930 449 016</a><br>
+          Teléfono: <a href="tel:+51959280078">959 280 078</a>
+        </div>
+        <a href="https://wa.me/51930449016?text=Hola,%20quiero%20información" target="_blank" class="btn-blue-full">Escríbenos por WhatsApp</a>
+        <div class="info-label">Paquetes</div>
+        <p style="font-size:.79rem;color:#555;">Ahorra inscribiéndote en 3 o más cursos — 80 h cada uno.</p>
+        <div class="modalidad-box"><p>📺 <strong>Modalidad:</strong> Clases en vivo por <strong>Google Meet</strong><br>🎬 Clases <strong>grabadas</strong> disponibles<br>📁 Material incluido en cada sesión</p></div>
+        <div class="reminder"><h5>Recordatorio</h5><p>Envía foto del voucher con tu nombre escrito al WhatsApp 930 449 016 el mismo día del pago.</p></div>
+      </div>
+    </div>
+  </article>
+
+  
+  <article class="post-card">
+    <div class="post-top">
+      <div class="post-header">
+        <div class="post-label">7 CURSOS CON CERTIFICACIÓN 2026</div>
+        <h2 class="post-title">🎓 7 Cursos 2026 con Certificación — EMPEZAMOS EL 21 DE MARZO 2026</h2>
+        <div class="post-meta">📲 Inscripciones abiertas • 80 horas académicas por curso</div>
+      </div>
+    </div>
+    <div class="post-body">
+      <div class="pcol">
+        <h3>Los 7 cursos disponibles</h3>
+        <ul>
+          <li>📘 <strong>Invierte.pe</strong> — Gestión del Ciclo de Inversión Pública, Formato 12B, cierre.</li>
+          <li>🏗 <strong>INFOBRAS</strong> — Registro, supervisión y cierre de obras públicas.</li>
+          <li>💻 <strong>SIAF</strong> — Operaciones presupuestales y financieras del Estado.</li>
+          <li>🗃 <strong>SIGA</strong> — Compras, almacén y patrimonio del Estado.</li>
+          <li>🏛 <strong>Contrataciones del Estado</strong> — Normativa OECE.</li>
+          <li>📊 <strong>Sistemas Administrativos del Estado</strong> — SIAF + SIGA + Invierte.pe.</li>
+          <li>💡 <strong>Ofimática</strong> — Word, Excel, PowerPoint, Power BI, Microsoft 365.</li>
+        </ul>
+        <a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue">Inscríbete ahora</a>
+      </div>
+      <div class="pcol">
+        <div class="inicio-h">🗓 Inicio: 21 Mar 2026</div>
+        <div class="info-label">¿Por qué elegirnos?</div>
+        <ul>
+          <li>✅ Certificado por 80 horas académicas</li>
+          <li>✅ Avalado por el Colegio de Ingenieros del Perú (CIP)</li>
+          <li>✅ Clases en vivo por Google Meet</li>
+          <li>✅ Clases grabadas disponibles</li>
+          <li>✅ Material práctico incluido</li>
+          <li>✅ Docentes especializados en gestión pública</li>
+          <li>✅ Casos reales aplicados al sector público peruano</li>
+          <li>✅ Válido para concursos públicos y CAS</li>
+        </ul>
+        <div class="contacto-links">
+          <a href="https://wa.me/51930449016">📱 +51 930 449 016</a>
+          <a href="tel:+51959280078">☎ 959 280 078</a>
+          📧 <a href="mailto:tuportalacademico@gmail.com">tuportalacademico@gmail.com</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+ 
+  <article class="post-card">
+    <div class="post-top">
+      <div class="post-header">
+        <div class="post-label">MODALIDAD Y BENEFICIOS</div>
+        <h2 class="post-title">📺 Clases en vivo por Google Meet — Grabadas y con material incluido</h2>
+        <div class="post-meta">Aprende a tu ritmo sin perder ninguna sesión</div>
+      </div>
+    </div>
+    <div class="beneficios-grid">
+      <div class="ben-card"><div class="ico">📺</div><p>Clases en vivo por Google Meet</p></div>
+      <div class="ben-card"><div class="ico">🎬</div><p>Grabaciones de cada clase disponibles</p></div>
+      <div class="ben-card"><div class="ico">📁</div><p>Material de trabajo incluido</p></div>
+      <div class="ben-card"><div class="ico">🏅</div><p>Certificado por 80 horas académicas</p></div>
+      <div class="ben-card"><div class="ico">🏛</div><p>Avalado por el CIP</p></div>
+      <div class="ben-card"><div class="ico">💬</div><p>Propón temas en vivo para casos prácticos</p></div>
+    </div>
+  </article>
+
+  <article class="post-card">
+    <div class="post-top">
+      <div class="post-header">
+        <div class="post-label">PROMOCIONES Y PRECIOS</div>
+        <h2 class="post-title">⭐ ¡Aprovecha nuestras promociones! — Mientras antes, más ahorras</h2>
+        <div class="post-meta">Descuentos por fecha y por paquete de 3 o más cursos</div>
+      </div>
+    </div>
+    <div class="precios-grid">
+      <div class="pc g"><div class="val">Hasta 28 Feb</div><div class="amt">S/40</div><div class="uni">por curso</div><div class="prm">3+ cursos:<br><strong>S/ 37.00 c/u</strong></div></div>
+      <div class="pc o"><div class="val">Hasta 09 Mar</div><div class="amt">S/50</div><div class="uni">por curso</div><div class="prm">3+ cursos:<br><strong>S/ 40.00 c/u</strong></div></div>
+      <div class="pc b"><div class="val">Hasta 19 Mar</div><div class="amt">S/60</div><div class="uni">por curso</div><div class="prm">3+ cursos:<br><strong>S/ 50.00 c/u</strong></div></div>
+      <div class="pc p"><div class="val">Hasta 21 Mar</div><div class="amt">S/70</div><div class="uni">por curso</div><div class="prm">3+ cursos:<br><strong>S/ 60.00 c/u</strong></div></div>
+    </div>
+    <div class="precios-cta">🚀 ¡Inscríbete hoy y accede al súper descuento! 📚✨</div>
+  </article>
+
+  <!-- POST 5: PAGOS -->
+  <article class="post-card">
+    <div class="post-top">
+      <div class="post-header">
+        <div class="post-label">INFORMACIÓN DE PAGO</div>
+        <h2 class="post-title">📌 Números de cuenta para pagos e instrucciones de inscripción</h2>
+        <div class="post-meta">BBVA • BCP • Interbank • Yape • Plin</div>
+      </div>
+    </div>
+    <div class="pagos-body">
+      <div class="pagos-grid">
+        <div>
+          <h4>🏦 Bancos</h4>
+          <div class="brow"><span class="tag t-bbva">BBVA</span><span>0011-0057-0239740503</span><span class="note">⚠ Transferencia BBVA: +S/ 2.50</span></div>
+          <div class="brow"><span class="tag t-bcp">BCP</span><span>49501522111064</span><span class="note">⚠ Agente BCP: +S/ 9.00</span></div>
+          <div class="brow"><span class="tag t-ib">Interbank</span><span>8983214510911</span></div>
+        </div>
+        <div>
+          <h4>📱 Pagos Móviles</h4>
+          <div class="brow"><span class="tag t-yape">Yape</span><span>959 280 078</span></div>
+          <div class="brow"><span class="tag t-plin">Plin</span><span>959 280 078</span></div>
+        </div>
+      </div>
+      <div class="pasos-box">
+        <h4>📝 Pasos para la inscripción</h4>
+        <div class="paso"><div class="pn">1</div><div>Realice el pago en cualquiera de las cuentas indicadas.</div></div>
+        <div class="paso"><div class="pn">2</div><div>Envíe una <strong>foto</strong> (no escaneado) del voucher al WhatsApp <strong>930 449 016</strong>.</div></div>
+        <div class="paso"><div class="pn">3</div><div>Escriba su <strong>nombre completo con lapicero</strong> sobre el voucher y envíelo el mismo día del pago.</div></div>
+      </div>
+    </div>
+  </article>
+
+  
+  <article class="post-card">
+    <div class="post-top">
+      <div class="post-header">
+        <div class="post-label">TEMARIOS DETALLADOS</div>
+        <h2 class="post-title">🎓 Cursos y Temarios — 7 cursos × 80 horas académicas c/u</h2>
+        <div class="post-meta">Haz clic en cada curso para ver el temario completo</div>
+      </div>
+    </div>
+    <div class="tem-item"><button class="tem-btn" onclick="tog(this)">📘 Invierte.pe — 80 h <span class="arr">▼</span></button><div class="tem-panel"><div class="tem-cols"><div class="tm"><h5>Contenido General</h5><ul><li>Sistema Administrativo en el Sector Público</li><li>Marco Normativo del SNPMGI</li><li>Identificación, Formulación y Evaluación</li><li>Fases del Ciclo de Inversión</li><li>Formulación de alternativas y evaluación ex post</li></ul><h5>Proyectos por Sector</h5><ul><li>PIP en Educación Básica Regular</li><li>PIP del Sector Ambiente</li><li>PIP de Vías Interurbanas</li><li>PIP de Electrificación Rural</li></ul></div><div class="tm"><h5>Módulo Práctico</h5><ul><li>Formulación de Proyectos</li><li>Evaluación Social (Excel)</li><li>Evaluación de Impacto Ambiental</li><li>Formato 6A, 7A, 8A y 8B (fase ejecución)</li><li>Formato 9 — Cierre de proyectos</li><li>Formato 12B — Seguimiento de ejecución</li><li>Ficha estándar saneamiento urbano/rural</li></ul><h5>Sesiones grabadas</h5><div class="session-item"><span class="s-num">S1.1</span><span>Introducción al Sistema Invierte.pe y Marco Normativo</span></div><div class="session-item"><span class="s-num">S1.2</span><span>Fases del Ciclo de Inversión — Programación Multianual</span></div><div class="session-item"><span class="s-num">S2.1</span><span>Formato N° 08 en la Fase de Ejecución</span></div><div class="session-item"><span class="s-num">S2.2</span><span>Formato 09 — Cierre de proyectos de inversión</span></div><div class="session-item"><span class="s-num">S2.3</span><span>Formato 12-B — Seguimiento a la ejecución</span></div><div class="session-item"><span class="s-num">S2.4</span><span>Ficha estándar Saneamiento (urbano y rural)</span></div></div></div></div></div>
+    <div class="tem-item"><button class="tem-btn" onclick="tog(this)">🏗 INFOBRAS — 80 h <span class="arr">▼</span></button><div class="tem-panel"><div class="tem-cols"><div class="tm"><h5>Introducción</h5><ul><li>Marco normativo del SNIOP</li><li>Rol de la Contraloría General</li><li>Beneficios y responsabilidades del registro</li><li>Acceso y navegación en la plataforma</li></ul><h5>Registro de Datos de la Obra</h5><ul><li>Ingreso y detalle de la obra</li><li>Clasificación según naturaleza</li><li>Registro del expediente técnico</li><li>Ubicación geográfica y territorial</li><li>Fuentes y modalidades de financiamiento</li></ul><h5>Supervisión y Ejecución</h5><ul><li>Datos generales de ejecución</li><li>Línea de tiempo y cronograma</li><li>Avance físico y financiero</li><li>Carga de evidencias documentarias y fotográficas</li><li>Buenas prácticas de supervisión</li></ul></div><div class="tm"><h5>Cierre y Liquidación</h5><ul><li>Recepción de la obra</li><li>Documentación y actas de cierre</li><li>Registro de la liquidación final</li><li>Validación y publicación del cierre</li><li>Errores frecuentes y cómo evitarlos</li></ul><h5>Casos Prácticos</h5><ul><li>Registro guiado de una obra real</li><li>Seguimiento de avances en tiempo real</li><li>Cierre y verificación de datos</li><li>Evaluación final y recomendaciones</li></ul><div class="tip">💬 ¿Tienes un tema adicional? Proponlo y lo trabajamos en vivo. 🙌</div></div></div></div></div>
+    <div class="tem-item"><button class="tem-btn" onclick="tog(this)">💻 SIAF — 80 h <span class="arr">▼</span></button><div class="tem-panel"><div class="tem-cols"><div class="tm"><h5>Introducción al SIAF</h5><ul><li>Marco general de la administración financiera pública</li><li>Objetivos y alcances del SIAF</li><li>Rol de las Unidades Ejecutoras</li><li>Integración con sistemas administrativos</li><li>Buenas prácticas en el uso del SIAF</li></ul><h5>Estructura Operativa</h5><ul><li>Componentes y entorno de trabajo</li><li>Perfiles de usuario, accesos y roles</li><li>Clasificadores presupuestarios</li><li>Fuentes de financiamiento</li><li>Cadena funcional programática</li></ul></div><div class="tm"><h5>Presupuesto Público</h5><ul><li>Fases del proceso presupuestario</li><li>Registro del PIA</li><li>Modificaciones, créditos y anulaciones</li><li>Transferencias de partidas</li><li>Consultas y reportes de ejecución</li></ul><h5>Certificación, Compromiso y Devengado</h5><ul><li>Concepto y registro de certificación</li><li>Registro del compromiso anual y mensual</li><li>Relación entre compromiso y devengado</li></ul><div class="tip">💬 ¿Tienes un tema del SIAF? ¡Proponlo! 🙌</div></div></div></div></div>
+    <div class="tem-item"><button class="tem-btn" onclick="tog(this)">🗃 SIGA — 80 h <span class="arr">▼</span></button><div class="tem-panel"><div class="tem-cols"><div class="tm"><h5>Introducción al SIGA</h5><ul><li>Concepto, objetivos e importancia</li><li>Articulación con el presupuesto institucional</li><li>Módulos que conforman el SIGA</li><li>Buenas prácticas de registro</li></ul><h5>Requerimientos y Abastecimiento</h5><ul><li>Registro de requerimientos de bienes y servicios</li><li>Catálogo de bienes y servicios</li><li>Consolidación y priorización</li><li>Flujo de atención y seguimiento</li></ul></div><div class="tm"><h5>Almacén y Patrimonio</h5><ul><li>Ingresos y salidas de almacén</li><li>Control de stock y Kardex</li><li>Transferencias internas y ajustes</li><li>Registro y control de bienes patrimoniales</li><li>Asignación, altas, bajas y reasignaciones</li><li>Reportes y casos prácticos</li></ul><div class="tip">💬 ¿Deseas proponer un tema adicional? 🙌✨</div></div></div></div></div>
+    <div class="tem-item"><button class="tem-btn" onclick="tog(this)">🏛 Contrataciones del Estado — 80 h <span class="arr">▼</span></button><div class="tem-panel"><div class="tem-cols"><div class="tm"><h5>Marco General</h5><ul><li>Finalidad y principios de la contratación pública</li><li>Ámbito de aplicación de la normativa</li><li>Actores: Área usuaria, OEC y Comité de selección</li><li>Fases del proceso de contratación</li><li>Responsabilidad administrativa, civil y penal</li></ul><h5>Actuaciones Preparatorias</h5><ul><li>Identificación de la necesidad</li><li>Elaboración del requerimiento</li><li>Estudio de mercado y valor referencial</li><li>Certificación de crédito presupuestario</li><li>Plan Anual de Contrataciones (PAC)</li></ul></div><div class="tm"><h5>Procedimientos de Selección</h5><ul><li>Tipos de procedimientos de selección</li><li>Elaboración de bases</li><li>Absolución de consultas y observaciones</li><li>Integración de bases</li><li>Evaluación técnica y económica</li><li>Calificación de postores</li><li>Otorgamiento de la buena pro</li><li>Declaratoria de desierto</li></ul><div class="tip">💬 ¿Tienes un caso específico? ¡Proponlo! 🙌</div></div></div></div></div>
+    <div class="tem-item"><button class="tem-btn" onclick="tog(this)">📊 Sistemas Administrativos del Estado — 80 h <span class="arr">▼</span></button><div class="tem-panel"><div class="tem-cols"><div class="tm"><h5>Gestión por Procesos</h5><ul><li>Política Nacional de Modernización de la Gestión Pública</li><li>Elementos, ventajas y ciclo de mejora continua</li></ul><h5>Desarrollo, Territorio e Inversión</h5><ul><li>Gestión pública moderna</li><li>Políticas públicas con enfoque territorial</li></ul><h5>Sistemas Administrativos</h5><ul><li>Integración de los sistemas del Estado</li><li>Sistema de Presupuesto Público</li><li>Articulación de planes y políticas</li></ul></div><div class="tm"><h5>Sistema Invierte.pe (integrado)</h5><ul><li>Introducción y Marco Normativo</li><li>Fases del Ciclo de Inversión</li><li>Formulación en Educación, Salud, Saneamiento y Electrificación</li><li>Registro de Cierre de Inversiones</li></ul><h5>SIAF y SIGA (integrado)</h5><ul><li>Introducción al SIAF y Módulo Administrativo</li><li>Introducción al SIGA</li></ul></div></div></div></div>
+    <div class="tem-item" style="border-bottom:none"><button class="tem-btn" onclick="tog(this)">💡 Ofimática — 80 h <span class="arr">▼</span></button><div class="tem-panel"><div class="tem-cols"><div class="tm"><h5>Word</h5><ul><li>Creación y edición de documentos</li><li>Estilos, plantillas, tablas e imágenes</li><li>Encabezados, numeración, control de cambios</li><li>Exportación a PDF</li></ul><h5>Excel y Power BI</h5><ul><li>Fórmulas y funciones básicas e intermedias</li><li>Filtros, tablas y gráficos dinámicos</li><li>Reportes automáticos</li><li>Introducción a Power BI y paneles</li></ul></div><div class="tm"><h5>PowerPoint</h5><ul><li>Diapositivas con diseño profesional</li><li>Imágenes, videos y gráficos</li><li>Animaciones, transiciones y presentaciones efectivas</li></ul><h5>Microsoft 365 y Nube</h5><ul><li>Gestión de archivos en la nube</li><li>Trabajo colaborativo en línea</li><li>Control de versiones y recuperación</li><li>Correo, calendario y reuniones virtuales</li></ul><div class="tip">💬 ¿Tienes un tema de Ofimática? ¡Proponlo! 🙌</div></div></div></div></div>
+  </article>
+
+</main>
+
+
+<aside class="sidebar-col">
+  <div class="sw"><div class="sw-title">Inscripción rápida</div><div class="sw-body"><p>🗓 Inicio: <strong>21 de marzo 2026</strong><br>Cupos limitados</p><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue-full" style="margin-bottom:8px">📱 Escribir por WhatsApp</a><a href="https://ingenierialider.org.pe" target="_blank">🌐 ingenierialider.org.pe</a><a href="tel:+51959280078">☎ 959 280 078</a>📧 <a href="mailto:tuportalacademico@gmail.com">tuportalacademico@gmail.com</a></div></div>
+  <div class="sw"><div class="sw-title">Los 7 cursos</div><div class="sw-body"><div class="sc">📘 Invierte.pe</div><div class="sc">🏗 INFOBRAS</div><div class="sc">💻 SIAF</div><div class="sc">🗃 SIGA</div><div class="sc">🏛 Contrataciones del Estado</div><div class="sc">📊 Sistemas Administrativos</div><div class="sc">💡 Ofimática</div></div></div>
+  <div class="sw"><div class="sw-title">Modalidad</div><div class="sw-body"><p>📺 Vivo por <strong>Google Meet</strong></p><p>🎬 Clases <strong>grabadas</strong></p><p>📁 Material incluido</p><p>🏅 Cert. <strong>80 horas</strong></p><p>🏛 Avalado por el <strong>CIP</strong></p></div></div>
+  <div class="sw"><div class="sw-title">Cuentas de pago</div><div class="sw-body"><div class="brow-s"><span class="tag t-bbva">BBVA</span><span>0011-0057-0239740503</span><span class="note">+S/2.50 por transferencia</span></div><div class="brow-s"><span class="tag t-bcp">BCP</span><span>49501522111064</span><span class="note">+S/9.00 si es agente BCP</span></div><div class="brow-s"><span class="tag t-ib">Interbank</span><span>8983214510911</span></div><div class="brow-s" style="margin-top:6px"><span class="tag t-yape">Yape</span><span>959 280 078</span></div><div class="brow-s"><span class="tag t-plin">Plin</span><span>959 280 078</span></div></div></div>
+  <div class="sw"><div class="sw-title">Promociones</div><div class="sw-body"><p>✅ Hasta 28/02 → <strong>S/40</strong>/curso<br><small>(3+ cursos: S/37 c/u)</small></p><p>✅ Hasta 09/03 → <strong>S/50</strong>/curso<br><small>(3+ cursos: S/40 c/u)</small></p><p>✅ Hasta 19/03 → <strong>S/60</strong>/curso<br><small>(3+ cursos: S/50 c/u)</small></p><p>✅ Hasta 21/03 → <strong>S/70</strong>/curso<br><small>(3+ cursos: S/60 c/u)</small></p></div></div>
+</aside>
+</div>
+</div>
+
+
+<div class="view" id="view-flipcard">
+<div style="padding:16px 12px;max-width:980px;margin:0 auto;">
+  <h2 style="font-size:1rem;color:#555;font-weight:300;margin-bottom:14px;">Flipcard — haz clic en cada tarjeta para ver los detalles</h2>
+  <div class="flipcard-grid">
+    <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front"><div class="fi">📘</div><h3>Invierte.pe</h3><div class="fh">80 horas académicas</div></div><div class="flip-back"><h4>Invierte.pe</h4><p>Gestión del Ciclo de Inversión Pública. Planificación, formulación, ejecución, Formato 12B y cierre de proyectos. Ideal para UF, OPMI y UE.</p><span class="fb-cert">🏅 80 horas</span><a href="https://ingenierialider.org.pe" target="_blank">Inscríbete</a></div></div></div>
+    <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front" style="background:#2e7d32"><div class="fi">🏗</div><h3>INFOBRAS</h3><div class="fh">80 horas académicas</div></div><div class="flip-back"><h4>INFOBRAS</h4><p>Registro, supervisión y cierre de obras públicas. Normativa vigente, control técnico, cuaderno de obras digital.</p><span class="fb-cert">🏅 80 horas</span><a href="https://ingenierialider.org.pe" target="_blank">Inscríbete</a></div></div></div>
+    <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front" style="background:#b8860b"><div class="fi">💻</div><h3>SIAF</h3><div class="fh">80 horas académicas</div></div><div class="flip-back"><h4>SIAF</h4><p>Sistema Integrado de Administración Financiera. Registra, controla y consulta operaciones presupuestales y financieras del Estado.</p><span class="fb-cert">🏅 80 horas</span><a href="https://ingenierialider.org.pe" target="_blank">Inscríbete</a></div></div></div>
+    <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front" style="background:#8b0000"><div class="fi">🗃</div><h3>SIGA</h3><div class="fh">80 horas académicas</div></div><div class="flip-back"><h4>SIGA</h4><p>Sistema Integrado de Gestión Administrativa. Gestiona compras, almacén y patrimonio del Estado con casos reales.</p><span class="fb-cert">🏅 80 horas</span><a href="https://ingenierialider.org.pe" target="_blank">Inscríbete</a></div></div></div>
+    <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front" style="background:#4a235a"><div class="fi">🏛</div><h3>Contrataciones del Estado</h3><div class="fh">80 horas académicas</div></div><div class="flip-back"><h4>Contrataciones del Estado</h4><p>Planifica y ejecuta compras públicas según el OECE. Procedimientos, PAC, buena pro y responsabilidades.</p><span class="fb-cert">🏅 80 horas</span><a href="https://ingenierialider.org.pe" target="_blank">Inscríbete</a></div></div></div>
+    <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front" style="background:#1a5276"><div class="fi">📊</div><h3>Sistemas Administrativos</h3><div class="fh">80 horas académicas</div></div><div class="flip-back"><h4>Sistemas Administrativos</h4><p>Integra SIAF, SIGA e Invierte.pe. Gestión por procesos, presupuesto y sistemas del Estado en un solo curso.</p><span class="fb-cert">🏅 80 horas</span><a href="https://ingenierialider.org.pe" target="_blank">Inscríbete</a></div></div></div>
+    <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front" style="background:#004481"><div class="fi">💡</div><h3>Ofimática</h3><div class="fh">80 horas académicas</div></div><div class="flip-back"><h4>Ofimática</h4><p>Word, Excel, PowerPoint, Power BI y Microsoft 365. Documentos, hojas de cálculo y presentaciones profesionales.</p><span class="fb-cert">🏅 80 horas</span><a href="https://ingenierialider.org.pe" target="_blank">Inscríbete</a></div></div></div>
+  </div>
+</div>
+</div>
+
+
+<div class="view" id="view-magazine">
+<div style="padding:16px 12px;max-width:980px;margin:0 auto;">
+  <div class="magazine-hero">
+    <div class="mag-feature">
+      <div class="mf-label">7 CURSOS CON CERTIFICACIÓN CIP — 2026</div>
+      <h2>Gestión Pública al más alto nivel: Invierte.pe, INFOBRAS, SIAF, SIGA, Contrataciones y más</h2>
+      <p>Certifícate con el CIP en 80 horas académicas por curso. Clases en vivo por Google Meet, grabadas, con material incluido. Inicio 21 de marzo 2026.</p>
+      <a href="https://ingenierialider.org.pe" target="_blank">Inscríbete ahora →</a>
+    </div>
+    <div class="mag-side">
+      <div class="mag-side-card"><div class="ms-label">INICIO</div><h3>🗓 21 de marzo 2026</h3><p>Inscripciones abiertas. Cupos limitados.</p></div>
+      <div class="mag-side-card"><div class="ms-label">MODALIDAD</div><h3>📺 Google Meet</h3><p>Clases grabadas + material incluido.</p></div>
+      <div class="mag-side-card"><div class="ms-label">PRECIO ACTUAL</div><h3>💰 Desde S/ 40</h3><p>3+ cursos con descuento especial.</p></div>
+    </div>
+  </div>
+  <div class="mag-grid">
+    <div class="mag-card"><div class="mag-card-top c1">📘</div><div class="mag-card-body"><div class="mc-label">CURSO</div><h3>Invierte.pe</h3><p>Ciclo de Inversión Pública, Formato 12B, cierre de proyectos. Ideal para UF, OPMI y UE.</p><span class="mc-cert">🏅 80 horas</span></div></div>
+    <div class="mag-card"><div class="mag-card-top c2">🏗</div><div class="mag-card-body"><div class="mc-label">CURSO</div><h3>INFOBRAS</h3><p>Registro, supervisión y cierre de obras públicas. Cuaderno de obras digital.</p><span class="mc-cert">🏅 80 horas</span></div></div>
+    <div class="mag-card"><div class="mag-card-top c3">💻</div><div class="mag-card-body"><div class="mc-label">CURSO</div><h3>SIAF</h3><p>Operaciones presupuestales y financieras. PIA, modificaciones, devengado.</p><span class="mc-cert">🏅 80 horas</span></div></div>
+    <div class="mag-card"><div class="mag-card-top c4">🗃</div><div class="mag-card-body"><div class="mc-label">CURSO</div><h3>SIGA</h3><p>Compras, almacén y patrimonio del Estado con casos reales.</p><span class="mc-cert">🏅 80 horas</span></div></div>
+    <div class="mag-card"><div class="mag-card-top c5">🏛</div><div class="mag-card-body"><div class="mc-label">CURSO</div><h3>Contrataciones</h3><p>Normativa OECE. PAC, procedimientos de selección, buena pro.</p><span class="mc-cert">🏅 80 horas</span></div></div>
+    <div class="mag-card"><div class="mag-card-top c6">💡</div><div class="mag-card-body"><div class="mc-label">CURSO</div><h3>Ofimática</h3><p>Word, Excel, PowerPoint, Power BI y Microsoft 365.</p><span class="mc-cert">🏅 80 horas</span></div></div>
+  </div>
+  <div class="mag-bottom">
+    <div class="mag-info-box"><h4>📌 Cuentas de Pago</h4><p><strong>BBVA:</strong> 0011-0057-0239740503 <span style="color:#c0392b;font-size:.72rem">(+S/2.50 por transf.)</span></p><p><strong>BCP:</strong> 49501522111064 <span style="color:#c0392b;font-size:.72rem">(+S/9.00 agente)</span></p><p><strong>Interbank:</strong> 8983214510911</p><p><strong>Yape / Plin:</strong> 959 280 078</p></div>
+    <div class="mag-info-box"><h4>⭐ Promociones</h4><p>Hasta 28/02 → <strong>S/40</strong>/curso (3+: S/37)</p><p>Hasta 09/03 → <strong>S/50</strong>/curso (3+: S/40)</p><p>Hasta 19/03 → <strong>S/60</strong>/curso (3+: S/50)</p><p>Hasta 21/03 → <strong>S/70</strong>/curso (3+: S/60)</p></div>
+  </div>
+</div>
+</div>
+
+
+<div class="view" id="view-mosaic">
+<div style="padding:16px 12px;max-width:980px;margin:0 auto;">
+  <div class="mosaic-grid">
+    <div class="mos mos-big m0"><div class="mos-ico">🎓</div><div class="mos-inner"><div class="mo-label">7 CURSOS CON CERTIFICACIÓN CIP</div><h3>Gestión Pública 2026 — Empieza el 21 de Marzo</h3><p>Invierte.pe • INFOBRAS • SIAF • SIGA • Contrataciones • Ofimática</p><span class="mo-cert">🏅 80 horas c/u • CIP Avalado</span></div></div>
+    <div class="mos m1"><div class="mos-ico">📘</div><div class="mos-inner"><div class="mo-label">CURSO</div><h3>Invierte.pe</h3><p>Ciclo de Inversión Pública, Formato 12B</p><span class="mo-cert">🏅 80 h</span></div></div>
+    <div class="mos m2"><div class="mos-ico">🏗</div><div class="mos-inner"><div class="mo-label">CURSO</div><h3>INFOBRAS</h3><p>Obras públicas, cuaderno digital</p><span class="mo-cert">🏅 80 h</span></div></div>
+    <div class="mos m3"><div class="mos-ico">💻</div><div class="mos-inner"><div class="mo-label">CURSO</div><h3>SIAF</h3><p>Presupuesto, devengado, PIA</p><span class="mo-cert">🏅 80 h</span></div></div>
+    <div class="mos m4"><div class="mos-ico">🗃</div><div class="mos-inner"><div class="mo-label">CURSO</div><h3>SIGA</h3><p>Compras, almacén y patrimonio</p><span class="mo-cert">🏅 80 h</span></div></div>
+    <div class="mos m5"><div class="mos-ico">🏛</div><div class="mos-inner"><div class="mo-label">CURSO</div><h3>Contrataciones</h3><p>OECE, PAC, buena pro</p><span class="mo-cert">🏅 80 h</span></div></div>
+    <div class="mos m6"><div class="mos-ico">💡</div><div class="mos-inner"><div class="mo-label">CURSO</div><h3>Ofimática</h3><p>Word, Excel, PowerPoint, Power BI</p><span class="mo-cert">🏅 80 h</span></div></div>
+    <div class="mos m-promo"><div class="mos-inner"><div class="mo-label">PROMOCIONES</div><h3>Desde S/ 40 por curso</h3><p>3+ cursos: descuento especial · Yape/Plin: 959280078</p></div></div>
+  </div>
+</div>
+</div>
+
+
+<div class="view" id="view-sidebar">
+<div style="padding:16px 12px;max-width:980px;margin:0 auto;">
+  <div class="sidebar-view-wrap">
+    <div class="sb-left">
+      <div class="sb-menu">
+        <div class="sb-menu-title">Cursos disponibles</div>
+        <a class="active-sb" onclick="sbSwitch(this,'sb-invierte')"><span class="sb-ico">📘</span> Invierte.pe</a>
+        <a onclick="sbSwitch(this,'sb-infobras')"><span class="sb-ico">🏗</span> INFOBRAS</a>
+        <a onclick="sbSwitch(this,'sb-siaf')"><span class="sb-ico">💻</span> SIAF</a>
+        <a onclick="sbSwitch(this,'sb-siga')"><span class="sb-ico">🗃</span> SIGA</a>
+        <a onclick="sbSwitch(this,'sb-contrat')"><span class="sb-ico">🏛</span> Contrataciones</a>
+        <a onclick="sbSwitch(this,'sb-sist')"><span class="sb-ico">📊</span> Sistemas Admin.</a>
+        <a onclick="sbSwitch(this,'sb-ofi')"><span class="sb-ico">💡</span> Ofimática</a>
+        <a onclick="sbSwitch(this,'sb-info')"><span class="sb-ico">📌</span> Pagos e Inscripción</a>
+      </div>
+    </div>
+    <div class="sb-content">
+      <div class="sb-panel active" id="sb-invierte"><div class="sb-post"><div class="sp-label">CURSO</div><h3>📘 Invierte.pe — 80 Horas Académicas</h3><p>Gestión Integral del Ciclo de Inversión Pública. Planificación, formulación, ejecución, elaboración de Formato 12B y cierre de proyectos. Ideal para equipos UF, OPMI y Unidades Ejecutoras.</p><h4>Contenido General</h4><ul><li>Sistema Administrativo en el Sector Público</li><li>Marco Normativo del SNPMGI</li><li>Identificación, Formulación y Evaluación</li><li>Fases del Ciclo de Inversión</li><li>Formulación de alternativas y evaluación ex post</li></ul><h4>Proyectos por Sector</h4><ul><li>PIP en Educación Básica Regular</li><li>PIP del Sector Ambiente</li><li>PIP de Vías Interurbanas</li><li>PIP de Electrificación Rural</li></ul><h4>Módulo Práctico</h4><ul><li>Formulación de Proyectos — Evaluación Social (Excel)</li><li>Evaluación de Impacto Ambiental</li><li>Formato 6A, 7A, 8A y 8B (fase de ejecución)</li><li>Formato 9 — Cierre de proyectos</li><li>Formato 12B — Seguimiento de ejecución</li><li>Ficha estándar saneamiento urbano y rural</li></ul><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue">Inscribirme en Invierte.pe</a></div></div>
+      <div class="sb-panel" id="sb-infobras"><div class="sb-post"><div class="sp-label">CURSO</div><h3>🏗 INFOBRAS — 80 Horas Académicas</h3><p>Domina el registro, supervisión y cierre de obras públicas. Aplica la normativa vigente, control técnico, transparencia en la gestión y cuaderno de obras digital.</p><h4>Temario</h4><ul><li>Marco normativo del SNIOP — Rol de la Contraloría</li><li>Registro de datos, expediente técnico y ubicación geográfica</li><li>Fuentes y modalidades de financiamiento</li><li>Supervisión: avance físico y financiero</li><li>Carga de evidencias documentarias y fotográficas</li><li>Cierre, liquidación y actas de recepción</li><li>Errores frecuentes y casos prácticos con obra real</li></ul><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue">Inscribirme en INFOBRAS</a></div></div>
+      <div class="sb-panel" id="sb-siaf"><div class="sb-post"><div class="sp-label">CURSO</div><h3>💻 SIAF — 80 Horas Académicas</h3><p>Sistema Integrado de Administración Financiera del Estado. Aprende a registrar, controlar y consultar operaciones presupuestales y financieras de forma rápida y segura.</p><h4>Temario</h4><ul><li>Marco general de la administración financiera pública</li><li>Estructura operativa, perfiles y clasificadores presupuestarios</li><li>Registro del PIA y modificaciones presupuestarias</li><li>Créditos suplementarios, anulaciones y transferencias</li><li>Certificación presupuestal, compromiso anual y mensual</li><li>Devengado y reportes de ejecución</li></ul><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue">Inscribirme en SIAF</a></div></div>
+      <div class="sb-panel" id="sb-siga"><div class="sb-post"><div class="sp-label">CURSO</div><h3>🗃 SIGA — 80 Horas Académicas</h3><p>Sistema Integrado de Gestión Administrativa. Gestiona compras, almacén y patrimonio del Estado de forma práctica y segura con casos reales.</p><h4>Temario</h4><ul><li>Concepto, objetivos y módulos del SIGA</li><li>Registro de requerimientos y catálogo de bienes y servicios</li><li>Consolidación, priorización y flujo de atención</li><li>Registro de ingresos y salidas de almacén</li><li>Control de stock, Kardex y ajustes de inventario</li><li>Bienes patrimoniales: altas, bajas y reasignaciones</li></ul><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue">Inscribirme en SIGA</a></div></div>
+      <div class="sb-panel" id="sb-contrat"><div class="sb-post"><div class="sp-label">CURSO</div><h3>🏛 Contrataciones del Estado — 80 Horas Académicas</h3><p>Aprende a planificar y ejecutar compras públicas según el Organismo Especializado para las Contrataciones Públicas Eficientes (OECE).</p><h4>Temario</h4><ul><li>Principios y fases de la contratación pública</li><li>Roles: Área usuaria, OEC y Comité de selección</li><li>Responsabilidad administrativa, civil y penal</li><li>Elaboración del requerimiento y estudio de mercado</li><li>Plan Anual de Contrataciones (PAC)</li><li>Tipos de procedimientos de selección</li><li>Evaluación técnica y económica — Buena pro</li></ul><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue">Inscribirme en Contrataciones</a></div></div>
+      <div class="sb-panel" id="sb-sist"><div class="sb-post"><div class="sp-label">CURSO</div><h3>📊 Manejo de Sistemas Administrativos del Estado — 80 Horas</h3><p>Integra en un solo curso: Invierte.pe, SIAF, SIGA y Gestión por Procesos. Ideal para servidores públicos que gestionan múltiples sistemas.</p><h4>Temario</h4><ul><li>Política Nacional de Modernización de la Gestión Pública</li><li>Gestión pública moderna y desarrollo territorial</li><li>Integración de los sistemas administrativos del Estado</li><li>Sistema de Presupuesto Público</li><li>Invierte.pe: formulación en Educación, Salud, Saneamiento y Electrificación</li><li>SIAF: Módulo Administrativo — SIGA: Introducción</li></ul><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue">Inscribirme</a></div></div>
+      <div class="sb-panel" id="sb-ofi"><div class="sb-post"><div class="sp-label">CURSO</div><h3>💡 Ofimática — 80 Horas Académicas</h3><p>Domina las herramientas de oficina para mejorar tu productividad laboral y digital.</p><h4>Temario</h4><ul><li>Word: documentos, estilos, plantillas, exportación a PDF</li><li>Excel: fórmulas, tablas dinámicas, gráficos y reportes automáticos</li><li>Power BI: importación desde Excel y creación de paneles</li><li>PowerPoint: presentaciones profesionales con animaciones</li><li>Microsoft 365: nube, trabajo colaborativo y reuniones virtuales</li></ul><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue">Inscribirme en Ofimática</a></div></div>
+      <div class="sb-panel" id="sb-info"><div class="sb-post"><div class="sp-label">PAGOS E INSCRIPCIÓN</div><h3>📌 Cuentas de Pago y Pasos para Inscribirse</h3><div class="brow" style="margin-bottom:8px"><span class="tag t-bbva">BBVA</span><span>0011-0057-0239740503</span><span class="note">⚠ Transferencia BBVA: +S/ 2.50</span></div><div class="brow" style="margin-bottom:8px"><span class="tag t-bcp">BCP</span><span>49501522111064</span><span class="note">⚠ Agente BCP: +S/ 9.00</span></div><div class="brow" style="margin-bottom:8px"><span class="tag t-ib">Interbank</span><span>8983214510911</span></div><div class="brow" style="margin-bottom:8px"><span class="tag t-yape">Yape</span><span>959 280 078</span></div><div class="brow" style="margin-bottom:16px"><span class="tag t-plin">Plin</span><span>959 280 078</span></div><div class="pasos-box"><h4>📝 Pasos</h4><div class="paso"><div class="pn">1</div><div>Realice el pago en cualquiera de las cuentas indicadas.</div></div><div class="paso"><div class="pn">2</div><div>Envíe una <strong>foto</strong> del voucher al WhatsApp <strong>930 449 016</strong>.</div></div><div class="paso"><div class="pn">3</div><div>Escriba su nombre completo con lapicero sobre el voucher y envíelo el mismo día del pago.</div></div></div></div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div class="view" id="view-snapshot">
+<div style="padding:16px 12px;max-width:980px;margin:0 auto;">
+  <div class="snapshot-hero">
+    <h1>7 Cursos con Certificación CIP 2026</h1>
+    <p>Clases en vivo · Grabadas · Material incluido · Avalado por el CIP · Inicio 21 de marzo</p>
+    <div class="sh-badges">
+      <span class="sh-badge">📘 Invierte.pe</span>
+      <span class="sh-badge">🏗 INFOBRAS</span>
+      <span class="sh-badge">💻 SIAF</span>
+      <span class="sh-badge">🗃 SIGA</span>
+      <span class="sh-badge">🏛 Contrataciones</span>
+      <span class="sh-badge">📊 Sistemas Admin.</span>
+      <span class="sh-badge">💡 Ofimática</span>
+    </div>
+    <a href="https://ingenierialider.org.pe" target="_blank">Inscríbete ahora →</a>
+  </div>
+  <div class="snapshot-timeline">
+    <div class="snap-item"><div class="snap-dot"></div><div class="snap-card"><div class="sk-label">PASO 1 — INSCRIPCIÓN</div><h3>Elige tu curso y paga</h3><p>Selecciona uno o más cursos y realiza el pago por BBVA, BCP, Interbank, Yape o Plin. Cupos limitados. Promociones por inscripción anticipada desde S/ 40.</p></div></div>
+    <div class="snap-item"><div class="snap-dot"></div><div class="snap-card"><div class="sk-label">PASO 2 — CONFIRMACIÓN</div><h3>Envía tu voucher de pago</h3><p>Envía una foto del voucher con tu nombre escrito con lapicero al WhatsApp 930 449 016 el mismo día del pago para validar tu inscripción.</p></div></div>
+    <div class="snap-item"><div class="snap-dot"></div><div class="snap-card"><div class="sk-label">PASO 3 — INICIO</div><h3>21 de marzo 2026 — ¡Empieza!</h3><p>Accede a tus clases en vivo por Google Meet. Todas las sesiones son grabadas para que puedas revisar el contenido cuando lo necesites.</p></div></div>
+    <div class="snap-item"><div class="snap-dot"></div><div class="snap-card"><div class="sk-label">PASO 4 — CERTIFICACIÓN</div><h3>Recibe tu certificado de 80 horas</h3><p>Al finalizar el curso recibes tu certificado de 80 horas académicas avalado por el Colegio de Ingenieros del Perú (CIP). Válido para concursos públicos y CAS.</p></div></div>
+    <div class="snap-item"><div class="snap-dot"></div><div class="snap-card"><div class="sk-label">PROMOCIONES</div><h3>Precios especiales por fecha</h3><p>S/40 hasta el 28/02 · S/50 hasta el 09/03 · S/60 hasta el 19/03 · S/70 hasta el 21/03. Inscribiendo 3+ cursos obtienes descuento adicional.</p></div></div>
+  </div>
+</div>
+</div>
+
+
+<div class="view" id="view-timeslide">
+<div style="padding:16px 12px;max-width:980px;margin:0 auto;">
+  <h2 style="font-size:.95rem;color:#555;font-weight:300;margin-bottom:14px;">Timeslide — navega entre los cursos</h2>
+  <div class="timeslide-wrap">
+    <div class="ts-track" id="ts-track">
+      
+      <div class="ts-slide"><div class="ts-slide-inner">
+        <div class="ts-card"><div class="tc-date">MAR 2026 — CURSO 1/7</div><h3>📘 Invierte.pe — 80 Horas</h3><p>Gestión Integral del Ciclo de Inversión Pública. Planificación, formulación, ejecución, Formato 12B y cierre. Ideal para UF, OPMI y Unidades Ejecutoras.</p><span class="tc-cert">🏅 Certificado 80 horas · Avalado CIP</span></div>
+        <div class="ts-card"><div class="tc-date">TEMARIO DESTACADO</div><h3>Formato 12B y Módulo Práctico</h3><p>Aprende a usar el Formato 12B de seguimiento, el Formato 9 de cierre, fichas de saneamiento urbano y rural, y evaluación social con Excel.</p><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue" style="font-size:.78rem">Inscribirme</a></div>
+      </div></div>
+      
+      <div class="ts-slide"><div class="ts-slide-inner">
+        <div class="ts-card"><div class="tc-date">MAR 2026 — CURSO 2/7</div><h3>🏗 INFOBRAS — 80 Horas</h3><p>Registro, supervisión y cierre de obras públicas. Normativa vigente, control técnico, cuaderno de obras digital y transparencia en la gestión pública.</p><span class="tc-cert">🏅 Certificado 80 horas · Avalado CIP</span></div>
+        <div class="ts-card"><div class="tc-date">TEMARIO DESTACADO</div><h3>Cierre, Liquidación y Casos Reales</h3><p>Ejercicio guiado de registro de una obra real, seguimiento en tiempo real, cierre y verificación de datos con errores frecuentes y cómo evitarlos.</p><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue" style="font-size:.78rem">Inscribirme</a></div>
+      </div></div>
+      
+      <div class="ts-slide"><div class="ts-slide-inner">
+        <div class="ts-card"><div class="tc-date">MAR 2026 — CURSO 3/7</div><h3>💻 SIAF — 80 Horas</h3><p>Sistema Integrado de Administración Financiera del Estado. Registra, controla y consulta operaciones presupuestales de forma rápida, práctica y segura.</p><span class="tc-cert">🏅 Certificado 80 horas · Avalado CIP</span></div>
+        <div class="ts-card"><div class="tc-date">TEMARIO DESTACADO</div><h3>PIA, Modificaciones y Devengado</h3><p>Registro del PIA, créditos suplementarios, anulaciones, transferencias de partidas, certificación presupuestal, compromiso anual y mensual.</p><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue" style="font-size:.78rem">Inscribirme</a></div>
+      </div></div>
+      
+      <div class="ts-slide"><div class="ts-slide-inner">
+        <div class="ts-card"><div class="tc-date">MAR 2026 — CURSO 4/7</div><h3>🗃 SIGA — 80 Horas</h3><p>Sistema Integrado de Gestión Administrativa. Gestiona compras, almacén y patrimonio del Estado de forma práctica y segura con casos reales.</p><span class="tc-cert">🏅 Certificado 80 horas · Avalado CIP</span></div>
+        <div class="ts-card"><div class="tc-date">TEMARIO DESTACADO</div><h3>Almacén, Patrimonio y Kardex</h3><p>Registro de ingresos y salidas de almacén, control de stock, Kardex de bienes, altas, bajas y reasignaciones de bienes patrimoniales del Estado.</p><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue" style="font-size:.78rem">Inscribirme</a></div>
+      </div></div>
+      
+      <div class="ts-slide"><div class="ts-slide-inner">
+        <div class="ts-card"><div class="tc-date">MAR 2026 — CURSO 5/7</div><h3>🏛 Contrataciones del Estado — 80 Horas</h3><p>Planifica y ejecuta compras públicas según el Organismo Especializado para las Contrataciones Públicas Eficientes (OECE). Normativa vigente.</p><span class="tc-cert">🏅 Certificado 80 horas · Avalado CIP</span></div>
+        <div class="ts-card"><div class="tc-date">TEMARIO DESTACADO</div><h3>PAC, Selección y Buena Pro</h3><p>Plan Anual de Contrataciones, tipos de procedimientos, evaluación técnica y económica, calificación de postores y otorgamiento de la buena pro.</p><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue" style="font-size:.78rem">Inscribirme</a></div>
+      </div></div>
+      
+      <div class="ts-slide"><div class="ts-slide-inner">
+        <div class="ts-card"><div class="tc-date">MAR 2026 — CURSO 6/7</div><h3>📊 Sistemas Administrativos del Estado — 80 Horas</h3><p>Integra SIAF, SIGA e Invierte.pe. Gestión por procesos, presupuesto y sistemas del Estado. Ideal para servidores públicos que trabajan con múltiples sistemas.</p><span class="tc-cert">🏅 Certificado 80 horas · Avalado CIP</span></div>
+        <div class="ts-card"><div class="tc-date">TEMARIO DESTACADO</div><h3>Gestión por Procesos y Modernización</h3><p>Política Nacional de Modernización, gestión pública moderna, articulación de planes y políticas, formulación de proyectos en múltiples sectores.</p><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue" style="font-size:.78rem">Inscribirme</a></div>
+      </div></div>
+      
+      <div class="ts-slide"><div class="ts-slide-inner">
+        <div class="ts-card"><div class="tc-date">MAR 2026 — CURSO 7/7</div><h3>💡 Ofimática — 80 Horas</h3><p>Domina Word, Excel, PowerPoint, Power BI y Microsoft 365. Mejora tu productividad laboral y digital con herramientas de oficina profesionales.</p><span class="tc-cert">🏅 Certificado 80 horas · Avalado CIP</span></div>
+        <div class="ts-card"><div class="tc-date">TEMARIO DESTACADO</div><h3>Power BI, Nube y Trabajo Colaborativo</h3><p>Importación de datos Excel a Power BI, creación de paneles, gestión en la nube con Microsoft 365, trabajo colaborativo y reuniones virtuales.</p><a href="https://ingenierialider.org.pe" target="_blank" class="btn-blue" style="font-size:.78rem">Inscribirme</a></div>
+      </div></div>
+    </div>
+    <div class="ts-controls">
+      <button class="ts-btn" id="ts-prev" onclick="tsMove(-1)" disabled>‹</button>
+      <div class="ts-dots" id="ts-dots"></div>
+      <span class="ts-counter" id="ts-counter">1 / 7</span>
+      <button class="ts-btn" id="ts-next" onclick="tsMove(1)">›</button>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div class="site-footer">
+  CURSOS CON CERTIFICACIÓN CIP &nbsp;|&nbsp;
+  <a href="https://ingenierialider.org.pe" target="_blank">ingenierialider.org.pe</a> &nbsp;|&nbsp;
+  <a href="https://wa.me/51930449016">WhatsApp +51 930 449 016</a> &nbsp;|&nbsp;
+  📧 <a href="mailto:tuportalacademico@gmail.com">tuportalacademico@gmail.com</a>
+</div>
+
+<a class="wa-fab" href="https://wa.me/51930449016?text=Hola,%20quiero%20información%20sobre%20los%20cursos%202026" target="_blank">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  WhatsApp
+</a>
+
+<script>
+
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  document.querySelectorAll('#main-nav a').forEach(function(a){ a.classList.remove('active'); });
+  document.getElementById('view-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+
+function tog(btn){
+  var panel = btn.nextElementSibling;
+  var isOpen = panel.classList.contains('open');
+  document.querySelectorAll('.tem-panel').forEach(function(p){ p.classList.remove('open'); });
+  document.querySelectorAll('.tem-btn').forEach(function(b){ b.classList.remove('open'); });
+  if(!isOpen){ panel.classList.add('open'); btn.classList.add('open'); }
+}
+
+
+function sbSwitch(link, panelId) {
+  document.querySelectorAll('.sb-menu a').forEach(function(a){ a.classList.remove('active-sb'); });
+  document.querySelectorAll('.sb-panel').forEach(function(p){ p.classList.remove('active'); });
+  link.classList.add('active-sb');
+  document.getElementById(panelId).classList.add('active');
+}
+
+
+var tsIndex = 0;
+var tsTotal = 7;
+var tsTrack = document.getElementById('ts-track');
+
+function tsRender(){
+  var slides = tsTrack.querySelectorAll('.ts-slide');
+  slides.forEach(function(s, i){
+    s.style.position = 'absolute';
+    s.style.width = '100%';
+    s.style.transform = 'translateX(' + ((i - tsIndex) * 100) + '%)';
+  });
+  tsTrack.style.position = 'relative';
+  tsTrack.style.height = (slides[tsIndex].offsetHeight || 320) + 'px';
+  document.getElementById('ts-counter').textContent = (tsIndex + 1) + ' / ' + tsTotal;
+  document.getElementById('ts-prev').disabled = tsIndex === 0;
+  document.getElementById('ts-next').disabled = tsIndex === tsTotal - 1;
+  document.querySelectorAll('.ts-dot').forEach(function(d, i){ d.classList.toggle('active', i === tsIndex); });
+}
+
+function tsMove(dir){
+  tsIndex = Math.max(0, Math.min(tsTotal - 1, tsIndex + dir));
+  tsRender();
+}
+
+
+(function(){
+  var dots = document.getElementById('ts-dots');
+  for(var i = 0; i < tsTotal; i++){
+    var d = document.createElement('div');
+    d.className = 'ts-dot' + (i === 0 ? ' active' : '');
+    (function(idx){ d.onclick = function(){ tsIndex = idx; tsRender(); }; })(i);
+    dots.appendChild(d);
+  }
+})();
+
+setTimeout(function(){ tsRender(); }, 150);
+window.addEventListener('resize', function(){
+  if(document.getElementById('view-timeslide').classList.contains('active')) tsRender();
+});
+
+
+function doSearch(query) {
+  query = query.trim().toLowerCase();
+  var bar = document.getElementById('search-results-bar');
+  var msg = document.getElementById('search-msg');
+  if (!query) { clearSearch(); return; }
+
+  
+  switchView('classic');
+
+  var cards = document.querySelectorAll('#view-classic .post-card');
+  var found = 0;
+  cards.forEach(function(card) {
+    var text = card.innerText.toLowerCase();
+    if (text.indexOf(query) !== -1) {
+      card.style.display = '';
+      found++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  bar.style.display = 'block';
+  if (found > 0) {
+    msg.innerHTML = '🔍 <strong>' + found + '</strong> resultado(s) para: <em>"' + query + '"</em>';
+  } else {
+    msg.innerHTML = '⚠️ No se encontraron resultados para: <em>"' + query + '"</em>';
+  }
+}
+
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results-bar').style.display = 'none';
+  document.querySelectorAll('#view-classic .post-card').forEach(function(c){ c.style.display = ''; });
+}
+</script>
+</body>
+</html>
